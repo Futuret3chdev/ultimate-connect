@@ -4,9 +4,10 @@ import { getStoredTokens, setStoredTokens } from "@/lib/tokens";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { platform: string } }
+  { params }: { params: Promise<{ platform: string }> }
 ) {
-  const platform = params.platform as PlatformId;
+  const { platform: platformParam } = await params;
+  const platform = platformParam as PlatformId;
   const config = PLATFORMS[platform];
   if (!config || !("tokenUrl" in config)) {
     return NextResponse.redirect(new URL("/?error=unsupported", request.url));

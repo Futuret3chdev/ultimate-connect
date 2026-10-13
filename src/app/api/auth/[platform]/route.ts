@@ -3,9 +3,10 @@ import { PLATFORMS, PlatformId } from "@/lib/platforms";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { platform: string } }
+  { params }: { params: Promise<{ platform: string }> }
 ) {
-  const platform = params.platform as PlatformId;
+  const { platform: platformParam } = await params;
+  const platform = platformParam as PlatformId;
   const config = PLATFORMS[platform];
   if (!config || !("authUrl" in config)) {
     return NextResponse.json({ error: "Unsupported platform" }, { status: 400 });
